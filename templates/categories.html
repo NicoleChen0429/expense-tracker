@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>分類管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="p-4 md:p-8">
+    <div class="container mx-auto max-w-4xl">
+      <h1 class="main-title">📂 分類管理</h1>
+
+      <!-- 新增分類表單 -->
+      <div class="category-section">
+        <h2
+          class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"
+        >
+          ➕ 新增分類
+        </h2>
+
+        <form
+          method="post"
+          action="{{ url_for('categories') }}"
+          class="space-y-6"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 分類名稱 -->
+            <div class="space-y-2">
+              <label
+                for="name"
+                class="block text-sm font-semibold text-gray-700"
+              >
+                🏷️ 分類名稱
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                required
+                placeholder="例如：薪水、午餐、交通..."
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              />
+            </div>
+
+            <!-- 類型選擇 -->
+            <div class="space-y-2">
+              <label
+                for="type"
+                class="block text-sm font-semibold text-gray-700"
+              >
+                🎯 類型
+              </label>
+              <select
+                name="type"
+                id="type"
+                required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 bg-white/80 backdrop-blur-sm"
+              >
+                <option value="" disabled selected>請選擇類型</option>
+                <option value="income">💰 收入</option>
+                <option value="expense">💸 支出</option>
+              </select>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full md:w-auto gradient-button success justify-center px-8 py-3"
+          >
+            ✅ 新增分類
+          </button>
+        </form>
+      </div>
+
+      <!-- 收入分類列表 -->
+      <div class="category-section">
+        <h2
+          class="text-2xl font-bold text-green-600 mb-6 flex items-center gap-2"
+        >
+          💰 收入分類
+        </h2>
+
+        {% set income_categories = categories|selectattr('2', 'equalto',
+        'income')|list %} {% if income_categories %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {% for cat in income_categories %}
+          <div
+            class="category-list-item p-4 rounded-lg border-2 border-green-200 flex justify-between items-center bg-gradient-to-r from-green-50 to-green-100"
+          >
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">💰</span>
+              <span class="font-semibold text-green-800 text-lg"
+                >{{ cat[1] }}</span
+              >
+            </div>
+            <a
+              href="{{ url_for('delete_category', cat_id=cat[0]) }}"
+              class="gradient-button danger text-xs px-3 py-1"
+              onclick="return confirm('確定要刪除「{{ cat[1] }}」分類嗎？\n刪除後相關記錄將顯示為「未分類」。')"
+            >
+              🗑️
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 text-gray-500">
+          <div class="text-4xl mb-4">🤷‍♀️</div>
+          <p class="text-lg">還沒有收入分類，快新增一個吧！</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- 支出分類列表 -->
+      <div class="category-section">
+        <h2
+          class="text-2xl font-bold text-red-600 mb-6 flex items-center gap-2"
+        >
+          💸 支出分類
+        </h2>
+
+        {% set expense_categories = categories|selectattr('2', 'equalto',
+        'expense')|list %} {% if expense_categories %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {% for cat in expense_categories %}
+          <div
+            class="category-list-item p-4 rounded-lg border-2 border-red-200 flex justify-between items-center bg-gradient-to-r from-red-50 to-red-100"
+          >
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">💸</span>
+              <span class="font-semibold text-red-800 text-lg"
+                >{{ cat[1] }}</span
+              >
+            </div>
+            <a
+              href="{{ url_for('delete_category', cat_id=cat[0]) }}"
+              class="gradient-button danger text-xs px-3 py-1"
+              onclick="return confirm('確定要刪除「{{ cat[1] }}」分類嗎？\n刪除後相關記錄將顯示為「未分類」。')"
+            >
+              🗑️
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 text-gray-500">
+          <div class="text-4xl mb-4">🤷‍♂️</div>
+          <p class="text-lg">還沒有支出分類，快新增一個吧！</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- 返回首頁按鈕 -->
+      <div class="text-center mt-12">
+        <a
+          href="{{ url_for('home') }}"
+          class="gradient-button primary justify-center px-8 py-3"
+        >
+          ← 回到首頁
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // 表單提交時的額外驗證
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const name = document.getElementById("name").value.trim();
+        const type = document.getElementById("type").value;
+
+        if (name.length < 1) {
+          e.preventDefault();
+          alert("請輸入分類名稱！");
+          return;
+        }
+
+        if (name.length > 50) {
+          e.preventDefault();
+          alert("分類名稱不能超過50個字元！");
+          return;
+        }
+      });
+
+      // 動態統計顯示
+      document.addEventListener("DOMContentLoaded", function () {
+        const incomeCount = document.querySelectorAll(
+          '[data-type="income"]'
+        ).length;
+        const expenseCount = document.querySelectorAll(
+          '[data-type="expense"]'
+        ).length;
+
+        // 可以在這裡添加統計顯示邏輯
+      });
+    </script>
+  </body>
+</html>

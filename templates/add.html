@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>新增紀錄</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="p-4 md:p-8 flex items-center justify-center min-h-screen">
+    <div
+      class="form-container w-full max-w-md p-8 rounded-xl shadow-2xl border border-white/20"
+    >
+      <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+        ✨ 新增收入/支出
+      </h1>
+
+      <form
+        method="post"
+        action="{{ url_for('add_transaction') }}"
+        class="space-y-6"
+      >
+        <!-- 金額輸入 -->
+        <div class="space-y-2">
+          <label for="amount" class="block text-sm font-semibold text-gray-700">
+            💰 金額
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            name="amount"
+            id="amount"
+            required
+            placeholder="請輸入金額"
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-lg bg-white/80 backdrop-blur-sm"
+          />
+        </div>
+
+        <!-- 分類選擇 -->
+        <div class="space-y-2">
+          <label
+            for="category_id"
+            class="block text-sm font-semibold text-gray-700"
+          >
+            📂 分類
+          </label>
+          <select
+            name="category_id"
+            id="category_id"
+            required
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-lg bg-white/80 backdrop-blur-sm"
+          >
+            <option value="" disabled selected>請選擇分類</option>
+            {% for cat in categories %}
+            <option value="{{ cat[0] }}">
+              {{ '💰' if cat[2] == 'income' else '💸' }} {{ cat[1] }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- 描述輸入 -->
+        <div class="space-y-2">
+          <label
+            for="description"
+            class="block text-sm font-semibold text-gray-700"
+          >
+            📝 描述 <span class="text-gray-400 text-xs">(選填)</span>
+          </label>
+          <input
+            type="text"
+            name="description"
+            id="description"
+            placeholder="備註說明..."
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-lg bg-white/80 backdrop-blur-sm"
+          />
+        </div>
+
+        <!-- 日期選擇 -->
+        <div class="space-y-2">
+          <label for="date" class="block text-sm font-semibold text-gray-700">
+            📅 日期
+          </label>
+          <input
+            type="date"
+            name="date"
+            id="date"
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg shadow-sm focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 text-lg bg-white/80 backdrop-blur-sm"
+          />
+        </div>
+
+        <!-- 提交按鈕 -->
+        <button
+          type="submit"
+          class="w-full gradient-button success justify-center py-4 text-lg font-bold hover:shadow-xl transition-all duration-300 mt-8"
+        >
+          ✅ 新增記錄
+        </button>
+      </form>
+
+      <!-- 返回連結 -->
+      <div class="mt-8 text-center">
+        <a
+          href="{{ url_for('home') }}"
+          class="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-medium transition-colors duration-300 hover:underline"
+        >
+          ← 回到首頁
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // 自動設定今天的日期
+      document.addEventListener("DOMContentLoaded", function () {
+        const dateInput = document.getElementById("date");
+        if (!dateInput.value) {
+          const today = new Date().toISOString().split("T")[0];
+          dateInput.value = today;
+        }
+      });
+
+      // 表單驗證增強
+      document.querySelector("form").addEventListener("submit", function (e) {
+        const amount = document.getElementById("amount").value;
+        if (amount <= 0) {
+          e.preventDefault();
+          alert("請輸入大於0的金額！");
+          return;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>記帳系統首頁</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="p-4 md:p-8">
+    <div class="container mx-auto max-w-6xl">
+      <h1 class="main-title">💰 帳戶概況</h1>
+
+      <div
+        class="flex flex-col lg:flex-row gap-4 justify-center items-start mb-8"
+      >
+        <div class="flex flex-col gap-4 w-full lg:w-auto">
+          <div class="balance-card income">
+            <p>總收入</p>
+            <div class="balance-value">+{{ balance.total_income }}</div>
+          </div>
+          <div class="balance-card expense">
+            <p>總支出</p>
+            <div class="balance-value">-{{ balance.total_expense }}</div>
+          </div>
+          <div class="balance-card balance">
+            <p>餘額</p>
+            <div class="balance-value">{{ balance.balance }}</div>
+          </div>
+        </div>
+
+        <div class="chart-card w-[250px]">
+          <h3 class="chart-title">收支比例</h3>
+          <canvas id="balanceChart"></canvas>
+        </div>
+
+        <div class="chart-card w-[250px]" id="calendarCard">
+          <h3 class="chart-title flex justify-between items-center">
+            <button id="prevMonth" class="text-gray-500 hover:text-gray-800">
+              ◀
+            </button>
+            <span id="calendarTitle"></span>
+            <button id="nextMonth" class="text-gray-500 hover:text-gray-800">
+              ▶
+            </button>
+          </h3>
+          <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-sm"></div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <h2 class="table-title">📜 最近支出/收入</h2>
+        <div class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th class="text-left">編號</th>
+                <th class="text-left">金額</th>
+                <th class="text-left">分類</th>
+                <th class="text-left">類型</th>
+                <th class="text-left">描述</th>
+                <th class="text-left">日期</th>
+                <th class="text-left">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in transactions %}
+              <tr class="hover:bg-gray-50 transition-colors duration-200">
+                <td class="font-medium text-gray-900">{{ t[0] }}</td>
+                <td class="font-semibold text-gray-900">{{ t[1] }}</td>
+                <td class="text-gray-700">{{ t[2] or '未分類' }}</td>
+                <td>
+                  <span
+                    class="type-badge {{ 'income-badge' if t[3] == 'income' else 'expense-badge' }}"
+                  >
+                    {{ '收入' if t[3] == 'income' else '支出' }}
+                  </span>
+                </td>
+                <td class="text-gray-600">{{ t[4] or '' }}</td>
+                <td class="text-gray-600">{{ t[5] }}</td>
+                <td>
+                  <a
+                    href="{{ url_for('delete_transaction', trans_id=t[0]) }}"
+                    class="gradient-button danger"
+                    onclick="return confirm('確定要刪除這筆記錄嗎？')"
+                  >
+                    刪除
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a
+          href="{{ url_for('add_transaction') }}"
+          class="gradient-button success w-full sm:w-auto justify-center"
+        >
+          ➕ 新增收入/支出
+        </a>
+        <a
+          href="{{ url_for('categories') }}"
+          class="gradient-button primary w-full sm:w-auto justify-center"
+        >
+          📂 分類管理
+        </a>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const ctx = document.getElementById('balanceChart').getContext('2d');
+      const balanceChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['收入', '支出'],
+          datasets: [{
+            data: [{{ income_total|tojson }}, {{ expense_total|tojson }}],
+            backgroundColor: ['#81C784', '#E57373'],
+            borderColor: ['#66BB6A', '#EF5350'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          aspectRatio: 1.3,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script>
+      const calendarTitle = document.getElementById("calendarTitle");
+      const calendarGrid = document.getElementById("calendarGrid");
+      let currentMonth = dayjs();
+
+      function renderCalendar(month) {
+        calendarTitle.textContent = month.format("YYYY 年 MM 月");
+        calendarGrid.innerHTML = "";
+
+        const startOfMonth = month.startOf("month");
+        const startDay = (startOfMonth.day() + 6) % 7;
+        const daysInMonth = month.daysInMonth();
+
+        const weekdays = ["一", "二", "三", "四", "五", "六", "日"];
+        weekdays.forEach((day) => {
+          calendarGrid.innerHTML += `<div class="font-semibold text-center text-gray-500">${day}</div>`;
+        });
+
+        for (let i = 0; i < startDay; i++) {
+          calendarGrid.innerHTML += `<div></div>`;
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const isToday = month.date(d).isSame(dayjs(), "day");
+          calendarGrid.innerHTML += `
+            <div class="p-2 rounded-lg text-center cursor-pointer 
+              ${isToday ? "bg-blue-500 text-white" : "hover:bg-blue-100"}">
+              ${d}</div>
+          `;
+        }
+      }
+
+      document.getElementById("prevMonth").onclick = () => {
+        currentMonth = currentMonth.subtract(1, "month");
+        renderCalendar(currentMonth);
+      };
+
+      document.getElementById("nextMonth").onclick = () => {
+        currentMonth = currentMonth.add(1, "month");
+        renderCalendar(currentMonth);
+      };
+
+      renderCalendar(currentMonth);
+    </script>
+  </body>
+</html>

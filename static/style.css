@@ -1,0 +1,261 @@
+/* 全域樣式 */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: linear-gradient(to bottom right, #9bc9ef, #b097ea, #f08ebf);
+  min-height: 100vh;
+}
+
+/* 主標題樣式 */
+.main-title {
+  position: relative;
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: #1f2937;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.main-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #6366f1, #ec4899);
+}
+
+/* 帳戶概況 + 圓餅圖容器 */
+.overview-section {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 1rem 0;
+  text-align: center;
+  align-items: center;
+}
+
+/* 首頁 - 帳戶餘額卡片 */
+.balance-cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 800px;
+}
+
+.balance-card {
+  flex: 1 1 100px;
+  width: 200px;
+  border-radius: 1rem;
+  padding: 0.8rem;
+  box-shadow: 0 10px 15px rgba(139, 92, 246, 0.3);
+  color: white;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.balance-card:hover {
+  transform: scale(1.05);
+}
+
+.balance-card p {
+  font-size: 1rem;
+  color: #c0c2c5;
+  margin-bottom: 0.5rem;
+}
+
+.balance-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.balance-card.income {
+  background: linear-gradient(to bottom right, #70e59b, #22c55e);
+}
+
+.balance-card.expense {
+  background: linear-gradient(to bottom right, #f0a2a2, #e86060);
+}
+
+.balance-card.balance {
+  background: linear-gradient(to bottom right, #89adda, #3b82f6);
+}
+
+/* 圓餅圖卡片 */
+.chart-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.chart-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+/* 表格容器 */
+.table-container {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.table-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.custom-table thead {
+  background: linear-gradient(to right, #6366f1, #8b5cf6);
+  color: white;
+}
+
+.custom-table th,
+.custom-table td {
+  text-align: left;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f3f4f6;
+  transition: background-color 0.2s ease;
+}
+
+/* 類型標籤 */
+.type-badge {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.income-badge {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.expense-badge {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* 按鈕樣式 */
+.gradient-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+}
+
+.gradient-button:hover {
+  transform: scale(1.05);
+}
+
+.gradient-button.primary {
+  background: linear-gradient(to right, #6366f1, #8b5cf6);
+  box-shadow: 0 8px 15px rgba(99, 102, 241, 0.3);
+}
+
+.gradient-button.success {
+  background: linear-gradient(to right, #4ade80, #22c55e);
+  box-shadow: 0 8px 15px rgba(74, 222, 128, 0.3);
+}
+
+.gradient-button.danger {
+  background: linear-gradient(to right, #ef4444, #f97316);
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.5);
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.gradient-button.danger:hover {
+  transform: scale(1.1);
+}
+
+/* 表單容器 */
+.form-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 分類容器 */
+.category-section {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.category-list-item {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.category-list-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2rem;
+  }
+
+  .balance-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .gradient-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
