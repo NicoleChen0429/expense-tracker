@@ -14,7 +14,7 @@ app.secret_key = os.getenv("FLASK_SECRET", "CHANGE_ME_TO_A_RANDOM_SECRET")
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_NAME = os.getenv('DB_NAME', 'expense_tracker')
 DB_USER = os.getenv('DB_USER', 'root')
-DB_PASS = os.getenv('DB_PASS', '123456')
+DB_PASS = os.getenv('DB_PASS')
 
 tracker = ExpenseTrackerORM(
     host=DB_HOST,
